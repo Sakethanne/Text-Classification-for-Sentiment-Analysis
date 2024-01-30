@@ -1,0 +1,1385 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{3725520208\_HW1\_CSCI544}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Importing necessary libraries}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}  \PY{c+c1}{\PYZsh{} For data manipulation and analysis}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}   \PY{c+c1}{\PYZsh{} For numerical operations}
+\PY{k+kn}{import} \PY{n+nn}{re}            \PY{c+c1}{\PYZsh{} Regular expressions for text processing}
+\PY{k+kn}{from} \PY{n+nn}{bs4} \PY{k+kn}{import} \PY{n}{BeautifulSoup}  \PY{c+c1}{\PYZsh{} For HTML parsing}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}  \PY{c+c1}{\PYZsh{} For splitting data into training and testing sets}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{feature\PYZus{}extraction}\PY{n+nn}{.}\PY{n+nn}{text} \PY{k+kn}{import} \PY{n}{TfidfVectorizer}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{Perceptron}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{accuracy\PYZus{}score}\PY{p}{,} \PY{n}{precision\PYZus{}score}\PY{p}{,} \PY{n}{recall\PYZus{}score}\PY{p}{,} \PY{n}{f1\PYZus{}score}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{naive\PYZus{}bayes} \PY{k+kn}{import} \PY{n}{MultinomialNB}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{svm} \PY{k+kn}{import} \PY{n}{SVC}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LogisticRegression}
+
+\PY{k+kn}{import} \PY{n+nn}{nltk}          \PY{c+c1}{\PYZsh{} Natural Language Toolkit for text processing}
+\PY{k+kn}{from} \PY{n+nn}{nltk}\PY{n+nn}{.}\PY{n+nn}{corpus} \PY{k+kn}{import} \PY{n}{stopwords}
+\PY{k+kn}{from} \PY{n+nn}{nltk}\PY{n+nn}{.}\PY{n+nn}{stem} \PY{k+kn}{import} \PY{n}{WordNetLemmatizer}
+\PY{n}{nltk}\PY{o}{.}\PY{n}{download}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{wordnet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Download WordNet data}
+\PY{n}{nltk}\PY{o}{.}\PY{n}{download}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{stopwords}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}   \PY{c+c1}{\PYZsh{} Download StopWords data}
+
+\PY{k+kn}{import} \PY{n+nn}{warnings}      \PY{c+c1}{\PYZsh{} To handle warnings}
+\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Ignore warnings for the remainder of the code}
+\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{default}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Set warnings back to default behavior}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[nltk\_data] Downloading package wordnet to
+[nltk\_data]     /Users/sakethanne/nltk\_data{\ldots}
+[nltk\_data]   Package wordnet is already up-to-date!
+[nltk\_data] Downloading package stopwords to
+[nltk\_data]     /Users/sakethanne/nltk\_data{\ldots}
+[nltk\_data]   Package stopwords is already up-to-date!
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} ! pip install bs4 \PYZsh{} in case you don\PYZsq{}t have it installed}
+\PY{c+c1}{\PYZsh{} ! pip install contractions \PYZsh{} in case contractions are not already installed}
+
+\PY{c+c1}{\PYZsh{} \PYZsh{} Dataset: https://s3.amazonaws.com/amazon\PYZhy{}reviews\PYZhy{}pds/tsv/amazon\PYZus{}reviews\PYZus{}us\PYZus{}Beauty\PYZus{}v1\PYZus{}00.tsv.gz}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \subsection{Read Data}\label{read-data}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Reading the data from the tsv (Amazon Kitchen dataset) file as a Pandas frame}
+\PY{n}{full\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./amazon\PYZus{}reviews\PYZus{}us\PYZus{}Office\PYZus{}Products\PYZus{}v1\PYZus{}00.tsv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{encoding}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{utf\PYZhy{}8}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{error\PYZus{}bad\PYZus{}lines}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/1150709939.py:2:
+FutureWarning: The error\_bad\_lines argument has been deprecated and will be
+removed in a future version. Use on\_bad\_lines in the future.
+
+
+  full\_data = pd.read\_csv("./amazon\_reviews\_us\_Office\_Products\_v1\_00.tsv",
+delimiter='\textbackslash{}t', encoding='utf-8', error\_bad\_lines=False)
+Skipping line 20773: expected 15 fields, saw 22
+Skipping line 39834: expected 15 fields, saw 22
+Skipping line 52957: expected 15 fields, saw 22
+Skipping line 54540: expected 15 fields, saw 22
+
+Skipping line 80276: expected 15 fields, saw 22
+Skipping line 96168: expected 15 fields, saw 22
+Skipping line 96866: expected 15 fields, saw 22
+Skipping line 98175: expected 15 fields, saw 22
+Skipping line 112539: expected 15 fields, saw 22
+Skipping line 119377: expected 15 fields, saw 22
+Skipping line 120065: expected 15 fields, saw 22
+Skipping line 124703: expected 15 fields, saw 22
+
+Skipping line 134024: expected 15 fields, saw 22
+Skipping line 153938: expected 15 fields, saw 22
+Skipping line 156225: expected 15 fields, saw 22
+Skipping line 168603: expected 15 fields, saw 22
+Skipping line 187002: expected 15 fields, saw 22
+
+Skipping line 200397: expected 15 fields, saw 22
+Skipping line 203809: expected 15 fields, saw 22
+Skipping line 207680: expected 15 fields, saw 22
+Skipping line 223421: expected 15 fields, saw 22
+Skipping line 244032: expected 15 fields, saw 22
+
+Skipping line 270329: expected 15 fields, saw 22
+Skipping line 276484: expected 15 fields, saw 22
+Skipping line 304755: expected 15 fields, saw 22
+
+Skipping line 379449: expected 15 fields, saw 22
+Skipping line 386191: expected 15 fields, saw 22
+Skipping line 391811: expected 15 fields, saw 22
+
+Skipping line 414348: expected 15 fields, saw 22
+Skipping line 414773: expected 15 fields, saw 22
+Skipping line 417572: expected 15 fields, saw 22
+Skipping line 419496: expected 15 fields, saw 22
+Skipping line 430528: expected 15 fields, saw 22
+Skipping line 442230: expected 15 fields, saw 22
+Skipping line 450931: expected 15 fields, saw 22
+
+Skipping line 465377: expected 15 fields, saw 22
+Skipping line 467685: expected 15 fields, saw 22
+Skipping line 485055: expected 15 fields, saw 22
+Skipping line 487220: expected 15 fields, saw 22
+Skipping line 496076: expected 15 fields, saw 22
+Skipping line 512269: expected 15 fields, saw 22
+
+Skipping line 529505: expected 15 fields, saw 22
+Skipping line 531286: expected 15 fields, saw 22
+Skipping line 535424: expected 15 fields, saw 22
+Skipping line 569898: expected 15 fields, saw 22
+Skipping line 586293: expected 15 fields, saw 22
+
+Skipping line 593880: expected 15 fields, saw 22
+Skipping line 599274: expected 15 fields, saw 22
+Skipping line 607961: expected 15 fields, saw 22
+Skipping line 612413: expected 15 fields, saw 22
+Skipping line 615913: expected 15 fields, saw 22
+
+Skipping line 677580: expected 15 fields, saw 22
+Skipping line 687191: expected 15 fields, saw 22
+Skipping line 710819: expected 15 fields, saw 22
+
+Skipping line 728692: expected 15 fields, saw 22
+Skipping line 730216: expected 15 fields, saw 22
+Skipping line 758397: expected 15 fields, saw 22
+Skipping line 760061: expected 15 fields, saw 22
+Skipping line 768935: expected 15 fields, saw 22
+Skipping line 769483: expected 15 fields, saw 22
+
+Skipping line 822725: expected 15 fields, saw 22
+Skipping line 823621: expected 15 fields, saw 22
+
+Skipping line 857041: expected 15 fields, saw 22
+Skipping line 857320: expected 15 fields, saw 22
+Skipping line 858565: expected 15 fields, saw 22
+Skipping line 860629: expected 15 fields, saw 22
+Skipping line 864033: expected 15 fields, saw 22
+Skipping line 868673: expected 15 fields, saw 22
+Skipping line 869189: expected 15 fields, saw 22
+
+Skipping line 938605: expected 15 fields, saw 22
+Skipping line 940100: expected 15 fields, saw 22
+Skipping line 975137: expected 15 fields, saw 22
+Skipping line 976314: expected 15 fields, saw 22
+
+Skipping line 985597: expected 15 fields, saw 22
+Skipping line 990873: expected 15 fields, saw 22
+Skipping line 991806: expected 15 fields, saw 22
+Skipping line 1019808: expected 15 fields, saw 22
+Skipping line 1021526: expected 15 fields, saw 22
+Skipping line 1023905: expected 15 fields, saw 22
+Skipping line 1044207: expected 15 fields, saw 22
+
+Skipping line 1084683: expected 15 fields, saw 22
+Skipping line 1093288: expected 15 fields, saw 22
+
+Skipping line 1136430: expected 15 fields, saw 22
+Skipping line 1139815: expected 15 fields, saw 22
+
+Skipping line 1179821: expected 15 fields, saw 22
+Skipping line 1195351: expected 15 fields, saw 22
+Skipping line 1202007: expected 15 fields, saw 22
+Skipping line 1224868: expected 15 fields, saw 22
+Skipping line 1232490: expected 15 fields, saw 22
+Skipping line 1238697: expected 15 fields, saw 22
+
+Skipping line 1258654: expected 15 fields, saw 22
+Skipping line 1279948: expected 15 fields, saw 22
+Skipping line 1294360: expected 15 fields, saw 22
+Skipping line 1302240: expected 15 fields, saw 22
+
+Skipping line 1413654: expected 15 fields, saw 22
+
+Skipping line 1687095: expected 15 fields, saw 22
+
+Skipping line 1805966: expected 15 fields, saw 22
+
+Skipping line 1892134: expected 15 fields, saw 22
+
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/1150709939.py:2:
+DtypeWarning: Columns (7) have mixed types. Specify dtype option on import or
+set low\_memory=False.
+  full\_data = pd.read\_csv("./amazon\_reviews\_us\_Office\_Products\_v1\_00.tsv",
+delimiter='\textbackslash{}t', encoding='utf-8', error\_bad\_lines=False)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Printing the data frame that contains the entire dataset from the tsv file}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{full\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+        marketplace  customer\_id       review\_id  product\_id  product\_parent  \textbackslash{}
+0                US     43081963  R18RVCKGH1SSI9  B001BM2MAC       307809868
+1                US     10951564  R3L4L6LW1PUOFY  B00DZYEXPQ        75004341
+2                US     21143145  R2J8AWXWTDX2TF  B00RTMUHDW       529689027
+3                US     52782374  R1PR37BR7G3M6A  B00D7H8XB6       868449945
+4                US     24045652  R3BDDDZMZBZDPU  B001XCWP34        33521401
+{\ldots}             {\ldots}          {\ldots}             {\ldots}         {\ldots}             {\ldots}
+2640249          US     53005790   RLI7EI10S7SN0  B00000DM9M       223408988
+2640250          US     52188548  R1F3SRK9MHE6A3  B00000DM9M       223408988
+2640251          US     52090046  R23V0C4NRJL8EM  0807865001       307284585
+2640252          US     52503173  R13ZAE1ATEUC1T  1572313188       870359649
+2640253          US     52585611   RE8J5O2GY04NN  1572313188       870359649
+
+                                             product\_title product\_category  \textbackslash{}
+0           Scotch Cushion Wrap 7961, 12 Inches x 100 Feet  Office Products
+1                Dust-Off Compressed Gas Duster, Pack of 4  Office Products
+2        Amram Tagger Standard Tag Attaching Tagging Gu{\ldots}  Office Products
+3        AmazonBasics 12-Sheet High-Security Micro-Cut {\ldots}  Office Products
+4        Derwent Colored Pencils, Inktense Ink Pencils,{\ldots}  Office Products
+{\ldots}                                                    {\ldots}              {\ldots}
+2640249                 PalmOne III Leather Belt Clip Case  Office Products
+2640250                 PalmOne III Leather Belt Clip Case  Office Products
+2640251                  Gods and Heroes of Ancient Greece  Office Products
+2640252  Microsoft EXCEL 97/ Visual Basic Step-by-Step {\ldots}  Office Products
+2640253  Microsoft EXCEL 97/ Visual Basic Step-by-Step {\ldots}  Office Products
+
+        star\_rating  helpful\_votes  total\_votes vine verified\_purchase  \textbackslash{}
+0                 5            0.0          0.0    N                 Y
+1                 5            0.0          1.0    N                 Y
+2                 5            0.0          0.0    N                 Y
+3                 1            2.0          3.0    N                 Y
+4                 4            0.0          0.0    N                 Y
+{\ldots}             {\ldots}            {\ldots}          {\ldots}  {\ldots}               {\ldots}
+2640249           4           26.0         26.0    N                 N
+2640250           4           18.0         18.0    N                 N
+2640251           4            9.0         16.0    N                 N
+2640252           5            0.0          0.0    N                 N
+2640253           5            0.0          0.0    N                 N
+
+                                           review\_headline  \textbackslash{}
+0                                               Five Stars
+1        Phffffffft, Phfffffft. Lots of air, and it's C{\ldots}
+2                            but I am sure I will like it.
+3        and the shredder was dirty and the bin was par{\ldots}
+4                                               Four Stars
+{\ldots}                                                    {\ldots}
+2640249  Great value! A must if you hate to carry thing{\ldots}
+2640250          Attaches the Palm Pilot like an appendage
+2640251  Excellent information, pictures and stories, I{\ldots}
+2640252                                         class text
+2640253                                 Microsoft's Finest
+
+                                               review\_body review\_date
+0                                           Great product.  2015-08-31
+1        What's to say about this commodity item except{\ldots}  2015-08-31
+2          Haven't used yet, but I am sure I will like it.  2015-08-31
+3        Although this was labeled as \&\#34;new\&\#34; the{\ldots}  2015-08-31
+4                          Gorgeous colors and easy to use  2015-08-31
+{\ldots}                                                    {\ldots}         {\ldots}
+2640249  I can't live anymore whithout my Palm III. But{\ldots}  1998-12-07
+2640250  Although the Palm Pilot is thin and compact it{\ldots}  1998-11-30
+2640251  This book had a lot of great content without b{\ldots}  1998-10-15
+2640252  I am teaching a course in Excel and am using t{\ldots}  1998-08-22
+2640253  A very comprehensive layout of exactly how Vis{\ldots}  1998-07-15
+
+[2640254 rows x 15 columns]
+    \end{Verbatim}
+
+    \subsection{Keep Reviews and Ratings}\label{keep-reviews-and-ratings}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Keep only the Reviews and Ratings fields from the full data}
+\PY{n}{data} \PY{o}{=} \PY{n}{full\PYZus{}data}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{review\PYZus{}body}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{star\PYZus{}rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{review\PYZus{}headline}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Converting \PYZsq{}star\PYZus{}rating\PYZsq{} to numeric values}
+\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{star\PYZus{}rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}numeric}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{star\PYZus{}rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{errors}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coerce}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Displaying three sample reviews along with ratings}
+\PY{n}{sample\PYZus{}reviews} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{=========================Sample Reviews:===========================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{sample\PYZus{}reviews}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+=========================Sample Reviews:===========================
+                                               review\_body  star\_rating  \textbackslash{}
+1654629  Wow!  I love my ScanSnap iX500 as much as my i{\ldots}          5.0
+1066478                                  It pads my mouse.          5.0
+1323683  Seems that some of the cartridges don't work. {\ldots}          3.0
+
+                             review\_headline
+1654629  Mac fan-addict loves ScanSnap iX500
+1066478                      This mouse pad.
+1323683                              It's Ok
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/297036716.py:5:
+SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row\_indexer,col\_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-
+docs/stable/user\_guide/indexing.html\#returning-a-view-versus-a-copy
+  data['star\_rating'] = pd.to\_numeric(data['star\_rating'], errors='coerce')
+    \end{Verbatim}
+
+    \#\# Form two classes and select 100000 reviews randomly from each
+class.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Creating binary labels for sentiment analysis}
+\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{star\PYZus{}rating}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{l+m+mi}{1} \PY{k}{if} \PY{n}{x} \PY{o}{\PYZgt{}} \PY{l+m+mi}{3} \PY{k}{else} \PY{l+m+mi}{0} \PY{k}{if} \PY{n}{x} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{2} \PY{k}{else} \PY{k+kc}{None}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Discarding neutral reviews (rating 3)}
+\PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{subset}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Selecting 100,000 positive and 100,000 negative reviews}
+\PY{n}{positive\PYZus{}reviews} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{l+m+mi}{100000}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{negative\PYZus{}reviews} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{l+m+mi}{100000}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Concatenating positive and negative reviews into a single data set for further test and train set split}
+\PY{n}{selected\PYZus{}reviews} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{positive\PYZus{}reviews}\PY{p}{,} \PY{n}{negative\PYZus{}reviews}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Printing the reviews that have been selected for further processing randomly}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{selected\PYZus{}reviews}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/18226587.py:2:
+SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row\_indexer,col\_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-
+docs/stable/user\_guide/indexing.html\#returning-a-view-versus-a-copy
+  data['sentiment'] = data['star\_rating'].apply(lambda x: 1 if x > 3 else 0 if x
+<= 2 else None)
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                               review\_body  star\_rating  \textbackslash{}
+980067   Yes they're thin, but they're sturdy and do th{\ldots}          5.0
+655902          order came in just fine, would order again          5.0
+1249308               exactly as it appears great for work          4.0
+2190006  I just set this up in my classroom. It is actu{\ldots}          5.0
+935188                                        good product          5.0
+{\ldots}                                                    {\ldots}          {\ldots}
+289745   I have a Brother MFC -J6720DW.  Unfortunately {\ldots}          2.0
+702019   I was extremely disappointed with this product{\ldots}          1.0
+2530891  I was excited about this all-in-one based on r{\ldots}          2.0
+1200675  Alright, so you think to yourself this is goin{\ldots}          1.0
+2214545  These clips do not work on stainless steel ref{\ldots}          1.0
+
+                                           review\_headline  sentiment
+980067                                     Thin but Sturdy        1.0
+655902                                  Name Badge magnets        1.0
+1249308                                         Four Stars        1.0
+2190006                                     Great product!        1.0
+935188                                          Five Stars        1.0
+{\ldots}                                                    {\ldots}        {\ldots}
+289745            Doesn't work wiith  Brother MFC -J6720DW        0.0
+702019                     Don't buy if you are a teacher!        0.0
+2530891                                        Ink Guzzler        0.0
+1200675  Failed, the magnet fell off after a few days w{\ldots}        0.0
+2214545                                  Clips don't work!        0.0
+
+[200000 rows x 4 columns]
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Reporting statistics of the ratings}
+\PY{n}{ratings\PYZus{}statistics} \PY{o}{=} \PY{n}{selected\PYZus{}reviews}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}index}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{========================Ratings Statistics:============================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ratings Count:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{ratings\PYZus{}statistics}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+========================Ratings Statistics:============================
+Ratings Count:
+0.0    100000
+1.0    100000
+Name: sentiment, dtype: int64
+    \end{Verbatim}
+
+    \#\# Split the dataset into training and testing dataset
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Splitting the dataset into 80\PYZpc{} training and 20\PYZpc{} testing}
+\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{selected\PYZus{}reviews}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{review\PYZus{}body}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                                    \PY{n}{selected\PYZus{}reviews}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sentiment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                                    \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,}
+                                                    \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Printing the Features of the training set}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+2472632    I'm sorry I bought this printer.  I guess it's{\ldots}
+1568399    Its a bit crude i must admit, but i still thou{\ldots}
+766793     Prints are blurry no matter how many times the{\ldots}
+1501214    Not worth \$5,00 folder is made of cheap plasti{\ldots}
+59127                      I got two. They both didn't work-
+                                 {\ldots}
+1824293    It has a variety of colors, but there's a thin{\ldots}
+968776                      Fell apart in less than 2 weeks.
+1126758    I bought this product a little over a year ago{\ldots}
+1745055    From the beginning, the pages printed terribly{\ldots}
+2237191    With the MagicJack Plus I have successfully ma{\ldots}
+Name: review\_body, Length: 160000, dtype: object
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Printing the Features of the testing set}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+2292297    worked fine for a week. then auto feed malfunc{\ldots}
+1067920                                                GREAT
+2626155    This toy was not created well for babies stand{\ldots}
+574517                                They work as expected.
+704740     very high quality like original ink. Love it a{\ldots}
+                                 {\ldots}
+1933307    It doesn't pay to buy off name folders. The Pe{\ldots}
+928345                                             excellent
+1898808    when working numbers in a fast paced environme{\ldots}
+307872     None of them worked. I'm going back to purchas{\ldots}
+1935724    I worked as a quality manager in paper manufac{\ldots}
+Name: review\_body, Length: 40000, dtype: object
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Printing the Target(s) of the training set}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+2472632    0.0
+1568399    1.0
+766793     0.0
+1501214    0.0
+59127      0.0
+          {\ldots}
+1824293    0.0
+968776     0.0
+1126758    0.0
+1745055    0.0
+2237191    0.0
+Name: sentiment, Length: 160000, dtype: float64
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Printing the Target(s) of the testing set}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+2292297    0.0
+1067920    1.0
+2626155    0.0
+574517     1.0
+704740     1.0
+          {\ldots}
+1933307    1.0
+928345     1.0
+1898808    0.0
+307872     0.0
+1935724    1.0
+Name: sentiment, Length: 40000, dtype: float64
+    \end{Verbatim}
+
+    \section{Data Cleaning}\label{data-cleaning}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Define a contraction map}
+\PY{n}{CONTRACTION\PYZus{}MAP} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{won}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{will not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{can}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cannot}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{m}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i am}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{re}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you are}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{re}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we are}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{re}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they are}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{isn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{is not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aren}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{are not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{haven}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{have not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hasn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{has not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{didn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{did not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{doesn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{does not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{don}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{do not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{wasn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{was not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{weren}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{were not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{haven}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{have not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hasn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{has not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{won}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{will not have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{can}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cannot have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ll}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they will}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{he would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{she would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{that would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they would}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{you have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{we have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{ve}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{they have}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{shouldn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{should not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{couldn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{could not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{wouldn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{would not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mightn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{might not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mustn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{must not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{shan}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{shall not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{oughtn}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ought not}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{who}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{who is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{what}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{what is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{where}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{where is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{when}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{when is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{why}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{why is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{how}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{how is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{it is}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{let}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{let us}\PY{l+s+s2}{\PYZdq{}}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Function to expand contractions}
+\PY{k}{def} \PY{n+nf}{expand\PYZus{}contractions}\PY{p}{(}\PY{n}{text}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{contraction}\PY{p}{,} \PY{n}{expansion} \PY{o+ow}{in} \PY{n}{CONTRACTION\PYZus{}MAP}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{text} \PY{o}{=} \PY{n}{re}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{n}{contraction}\PY{p}{,} \PY{n}{expansion}\PY{p}{,} \PY{n}{text}\PY{p}{)}
+    \PY{k}{return} \PY{n}{text}
+
+\PY{c+c1}{\PYZsh{} Preprocess the reviews}
+\PY{k}{def} \PY{n+nf}{preprocess\PYZus{}reviews}\PY{p}{(}\PY{n}{reviews}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Convert to lowercase and handle NaN values}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)} \PY{k}{if} \PY{n}{pd}\PY{o}{.}\PY{n}{notna}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{else} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} Remove HTML and URLs}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{BeautifulSoup}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{html.parser}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{get\PYZus{}text}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{re}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{http}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{S+}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Remove non\PYZhy{}alphabetical characters (excluding single quote)}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{re}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[\PYZca{}a\PYZhy{}zA\PYZhy{}Z}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{s}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Remove extra spaces}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{re}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ +}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Perform contractions}
+    \PY{n}{reviews} \PY{o}{=} \PY{n}{reviews}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n}{expand\PYZus{}contractions}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Return the processed text of the review}
+    \PY{k}{return} \PY{n}{reviews}
+
+\PY{c+c1}{\PYZsh{} Preprocess the training set}
+\PY{n}{X\PYZus{}train\PYZus{}preprocessed} \PY{o}{=} \PY{n}{preprocess\PYZus{}reviews}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print average length of reviews before and after cleaning}
+\PY{n}{avg\PYZus{}length\PYZus{}before} \PY{o}{=} \PY{n}{X\PYZus{}train}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n+nb}{str}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{avg\PYZus{}length\PYZus{}after} \PY{o}{=} \PY{n}{X\PYZus{}train\PYZus{}preprocessed}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n+nb}{len}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{===================Printing the Average lenght of Reviews Before and After Cleaning====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Average Length of Reviews (Before Cleaning): }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{avg\PYZus{}length\PYZus{}before}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ characters}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Average Length of Reviews (After Cleaning): }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{avg\PYZus{}length\PYZus{}after}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ characters}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/3895173410.py:75
+: MarkupResemblesLocatorWarning: The input looks more like a filename than
+markup. You may want to open this file and pass the filehandle into Beautiful
+Soup.
+  reviews = reviews.apply(lambda x: BeautifulSoup(x, 'html.parser').get\_text())
+/var/folders/xx/d1tzxzhj3fzbmswz4z7m\_40w0000gn/T/ipykernel\_7666/3895173410.py:75
+: MarkupResemblesLocatorWarning: The input looks more like a URL than markup.
+You may want to use an HTTP client like requests to get the document behind the
+URL, and feed that document to Beautiful Soup.
+  reviews = reviews.apply(lambda x: BeautifulSoup(x, 'html.parser').get\_text())
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+===================Printing the Average lenght of Reviews Before and After
+Cleaning====================
+
+Average Length of Reviews (Before Cleaning): 318 characters
+Average Length of Reviews (After Cleaning): 302 characters
+    \end{Verbatim}
+
+    \section{Pre-processing}\label{pre-processing}
+
+\subsubsection{-- remove the stop words}\label{remove-the-stop-words}
+
+\subsubsection{-- perform lemmatization}\label{perform-lemmatization}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize NLTK\PYZsq{}s stopwords and WordNet lemmatizer}
+\PY{n}{stop\PYZus{}words} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{n}{stopwords}\PY{o}{.}\PY{n}{words}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{english}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{lemmatizer} \PY{o}{=} \PY{n}{WordNetLemmatizer}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Function to remove stop words and perform lemmatization}
+\PY{k}{def} \PY{n+nf}{preprocess\PYZus{}nltk}\PY{p}{(}\PY{n}{review}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{pd}\PY{o}{.}\PY{n}{notna}\PY{p}{(}\PY{n}{review}\PY{p}{)}\PY{p}{:}
+        \PY{n}{words} \PY{o}{=} \PY{n}{nltk}\PY{o}{.}\PY{n}{word\PYZus{}tokenize}\PY{p}{(}\PY{n+nb}{str}\PY{p}{(}\PY{n}{review}\PY{p}{)}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Convert to lowercase}
+        \PY{n}{words} \PY{o}{=} \PY{p}{[}\PY{n}{lemmatizer}\PY{o}{.}\PY{n}{lemmatize}\PY{p}{(}\PY{n}{word}\PY{p}{)} \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{words} \PY{k}{if} \PY{n}{word}\PY{o}{.}\PY{n}{isalpha}\PY{p}{(}\PY{p}{)} \PY{o+ow}{and} \PY{n}{word} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{stop\PYZus{}words}\PY{p}{]}
+        \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{words}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Preprocess the training set using NLTK}
+\PY{n}{X\PYZus{}train\PYZus{}nltk\PYZus{}preprocessed} \PY{o}{=} \PY{n}{X\PYZus{}train\PYZus{}preprocessed}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n}{preprocess\PYZus{}nltk}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print three sample reviews before and after NLTK preprocessing}
+\PY{n}{sample\PYZus{}reviews\PYZus{}indices} \PY{o}{=} \PY{n}{X\PYZus{}train\PYZus{}preprocessed}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{o}{.}\PY{n}{index}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{============ Printing Sample Reviews Before and After Pre\PYZhy{}processing =============}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{index} \PY{o+ow}{in} \PY{n}{sample\PYZus{}reviews\PYZus{}indices}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Sample Review }\PY{l+s+si}{\PYZob{}}\PY{n}{index}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ Before Pre\PYZhy{}processing:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}preprocessed}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{index}\PY{p}{]}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Sample Review }\PY{l+s+si}{\PYZob{}}\PY{n}{index}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ After NLTK Pre\PYZhy{}processing:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}nltk\PYZus{}preprocessed}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{index}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print average length of reviews before and after NLTK processing}
+\PY{n}{avg\PYZus{}length\PYZus{}before\PYZus{}nltk} \PY{o}{=} \PY{n}{X\PYZus{}train\PYZus{}preprocessed}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n+nb}{len}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{avg\PYZus{}length\PYZus{}after\PYZus{}nltk} \PY{o}{=} \PY{n}{X\PYZus{}train\PYZus{}nltk\PYZus{}preprocessed}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n+nb}{len}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{=================Printing the Average lenght of Reviews Before and After Pre\PYZhy{}processing==================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Average Length of Reviews (Before NLTK Processing): }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{avg\PYZus{}length\PYZus{}before\PYZus{}nltk}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ characters}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Average Length of Reviews (After NLTK Processing): }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{avg\PYZus{}length\PYZus{}after\PYZus{}nltk}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ characters}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+============ Printing Sample Reviews Before and After Pre-processing
+=============
+
+Sample Review 2179717 Before Pre-processing:
+it works of the time and then only for few seconds and it turns off imagine that
+in the middle of your presentation better invest in a name brand product
+
+Sample Review 2179717 After NLTK Pre-processing:
+work time second turn imagine middle presentation better invest name brand
+product
+
+Sample Review 1647528 Before Pre-processing:
+phone does not work or chargelike to return it for my get a full refund on this
+product thank you very much
+
+Sample Review 1647528 After NLTK Pre-processing:
+phone work chargelike return get full refund product thank much
+
+Sample Review 1572559 Before Pre-processing:
+this perfectly works in the container store label maker and costs a lot less my
+label maker model is pt
+
+Sample Review 1572559 After NLTK Pre-processing:
+perfectly work container store label maker cost lot le label maker model pt
+
+=================Printing the Average lenght of Reviews Before and After Pre-
+processing==================
+
+Average Length of Reviews (Before NLTK Processing): 302 characters
+Average Length of Reviews (After NLTK Processing): 187 characters
+    \end{Verbatim}
+
+    \section{TF-IDF Feature Extraction}\label{tf-idf-feature-extraction}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the TF\PYZhy{}IDF vectorizer}
+\PY{n}{tfidf\PYZus{}vectorizer} \PY{o}{=} \PY{n}{TfidfVectorizer}\PY{p}{(}\PY{n}{max\PYZus{}features}\PY{o}{=}\PY{l+m+mi}{2000000}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Fit and transform the training set}
+\PY{n}{X\PYZus{}train\PYZus{}tfidf} \PY{o}{=} \PY{n}{tfidf\PYZus{}vectorizer}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}nltk\PYZus{}preprocessed}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Transform the test set}
+\PY{n}{X\PYZus{}test\PYZus{}tfidf} \PY{o}{=} \PY{n}{tfidf\PYZus{}vectorizer}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n}{preprocess\PYZus{}nltk}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the shape of the TF\PYZhy{}IDF matrices}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Shape of X\PYZus{}train\PYZus{}tfidf: }\PY{l+s+si}{\PYZob{}}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape of X\PYZus{}test\PYZus{}tfidf: }\PY{l+s+si}{\PYZob{}}\PY{n}{X\PYZus{}test\PYZus{}tfidf}\PY{o}{.}\PY{n}{shape}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Shape of X\_train\_tfidf: (160000, 106898)
+Shape of X\_test\_tfidf: (40000, 106898)
+    \end{Verbatim}
+
+    \section{Perceptron}\label{perceptron}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the Perceptron model}
+\PY{n}{perceptron\PYZus{}model} \PY{o}{=} \PY{n}{Perceptron}\PY{p}{(}\PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train the Perceptron model on the TF\PYZhy{}IDF features}
+\PY{n}{perceptron\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the training set}
+\PY{n}{y\PYZus{}train\PYZus{}pred} \PY{o}{=} \PY{n}{perceptron\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the test set}
+\PY{n}{y\PYZus{}test\PYZus{}pred} \PY{o}{=} \PY{n}{perceptron\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the training set}
+\PY{n}{accuracy\PYZus{}train} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred}\PY{p}{)}
+\PY{n}{precision\PYZus{}train} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred}\PY{p}{)}
+\PY{n}{recall\PYZus{}train} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred}\PY{p}{)}
+\PY{n}{f1\PYZus{}train} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the test set}
+\PY{n}{accuracy\PYZus{}test} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred}\PY{p}{)}
+\PY{n}{precision\PYZus{}test} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred}\PY{p}{)}
+\PY{n}{recall\PYZus{}test} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred}\PY{p}{)}
+\PY{n}{f1\PYZus{}test} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the results}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Training Set Metrics: (Perceptron) ===================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}train}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}train}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}train}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}train}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Testing Set Metrics: (Perceptron) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}test}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}test}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}test}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}test}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+================== Training Set Metrics: (Perceptron) ===================
+Accuracy: 0.91079375
+Precision: 0.9336473506438674
+Recall: 0.8844601097403977
+F1-score: 0.9083883721975109
+
+================== Testing Set Metrics: (Perceptron) ====================
+Accuracy: 0.825175
+Precision: 0.8139186709166425
+Recall: 0.8429450307607663
+F1-score: 0.8281775965011426
+    \end{Verbatim}
+
+    \section{SVM}\label{svm}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the SVM model}
+\PY{n}{svm\PYZus{}model} \PY{o}{=} \PY{n}{SVC}\PY{p}{(}\PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train the SVM model on the TF\PYZhy{}IDF features}
+\PY{n}{svm\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the training set}
+\PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}svm} \PY{o}{=} \PY{n}{svm\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the test set}
+\PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}svm} \PY{o}{=} \PY{n}{svm\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the training set}
+\PY{n}{accuracy\PYZus{}train\PYZus{}svm} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{precision\PYZus{}train\PYZus{}svm} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{recall\PYZus{}train\PYZus{}svm} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{f1\PYZus{}train\PYZus{}svm} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the test set}
+\PY{n}{accuracy\PYZus{}test\PYZus{}svm} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{precision\PYZus{}test\PYZus{}svm} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{recall\PYZus{}test\PYZus{}svm} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+\PY{n}{f1\PYZus{}test\PYZus{}svm} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}svm}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the results}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Training Set Metrics: (SVM) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}train\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}train\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}train\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}train\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Testing Set Metrics: (SVM) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}test\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}test\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}test\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}test\PYZus{}svm}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+================== Training Set Metrics: (SVM) ====================
+Accuracy: 0.97296875
+Precision: 0.9731544463339001
+Recall: 0.9727773819790768
+F1-score: 0.9729658776244976
+
+================== Testing Set Metrics: (SVM) ====================
+Accuracy: 0.903425
+Precision: 0.9019637161084529
+Recall: 0.9051668083829341
+F1-score: 0.9035624235464463
+    \end{Verbatim}
+
+    \section{Logistic Regression}\label{logistic-regression}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the Logistic Regression model}
+\PY{n}{logreg\PYZus{}model} \PY{o}{=} \PY{n}{LogisticRegression}\PY{p}{(}\PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train the Logistic Regression model on the TF\PYZhy{}IDF features}
+\PY{n}{logreg\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the training set}
+\PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}logreg} \PY{o}{=} \PY{n}{logreg\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the test set}
+\PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}logreg} \PY{o}{=} \PY{n}{logreg\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the training set}
+\PY{n}{accuracy\PYZus{}train\PYZus{}logreg} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{precision\PYZus{}train\PYZus{}logreg} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{recall\PYZus{}train\PYZus{}logreg} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{f1\PYZus{}train\PYZus{}logreg} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the test set}
+\PY{n}{accuracy\PYZus{}test\PYZus{}logreg} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{precision\PYZus{}test\PYZus{}logreg} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{recall\PYZus{}test\PYZus{}logreg} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+\PY{n}{f1\PYZus{}test\PYZus{}logreg} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}logreg}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the results}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Training Set Metrics: (Logistic Regression) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}train\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}train\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}train\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}train\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Testing Set Metrics: (Logistic Regression) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}test\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}test\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}test\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}test\PYZus{}logreg}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/Users/sakethanne/anaconda3/lib/python3.11/site-
+packages/sklearn/linear\_model/\_logistic.py:458: ConvergenceWarning: lbfgs failed
+to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max\_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear\_model.html\#logistic-
+regression
+  n\_iter\_i = \_check\_optimize\_result(
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+================== Training Set Metrics: (Logistic Regression)
+====================
+Accuracy: 0.91113125
+Precision: 0.9141152180481418
+Recall: 0.9075455897608959
+F1-score: 0.9108185575674709
+
+================== Testing Set Metrics: (Logistic Regression)
+====================
+Accuracy: 0.8937
+Precision: 0.8963190492975477
+Recall: 0.8903116090631721
+F1-score: 0.8933052293485897
+    \end{Verbatim}
+
+    \section{Naive Bayes}\label{naive-bayes}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize the Multinomial Naive Bayes model}
+\PY{n}{nb\PYZus{}model} \PY{o}{=} \PY{n}{MultinomialNB}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Train the Multinomial Naive Bayes model on the TF\PYZhy{}IDF features}
+\PY{n}{nb\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the training set}
+\PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}nb} \PY{o}{=} \PY{n}{nb\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Predictions on the test set}
+\PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}nb} \PY{o}{=} \PY{n}{nb\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test\PYZus{}tfidf}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the training set}
+\PY{n}{accuracy\PYZus{}train\PYZus{}nb} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{precision\PYZus{}train\PYZus{}nb} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{recall\PYZus{}train\PYZus{}nb} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{f1\PYZus{}train\PYZus{}nb} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate metrics for the test set}
+\PY{n}{accuracy\PYZus{}test\PYZus{}nb} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{precision\PYZus{}test\PYZus{}nb} \PY{o}{=} \PY{n}{precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{recall\PYZus{}test\PYZus{}nb} \PY{o}{=} \PY{n}{recall\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+\PY{n}{f1\PYZus{}test\PYZus{}nb} \PY{o}{=} \PY{n}{f1\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test\PYZus{}pred\PYZus{}nb}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the results}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Training Set Metrics: (Multinomial Naive Bayes) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}train\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}train\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}train\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}train\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{================== Testing Set Metrics: (Multinomial Naive Bayes) ====================}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy\PYZus{}test\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Precision: }\PY{l+s+si}{\PYZob{}}\PY{n}{precision\PYZus{}test\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Recall: }\PY{l+s+si}{\PYZob{}}\PY{n}{recall\PYZus{}test\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{F1\PYZhy{}score: }\PY{l+s+si}{\PYZob{}}\PY{n}{f1\PYZus{}test\PYZus{}nb}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+================== Training Set Metrics: (Multinomial Naive Bayes)
+====================
+Accuracy: 0.88069375
+Precision: 0.8966428794666111
+Recall: 0.8606121964328122
+F1-score: 0.8782581521565825
+
+================== Testing Set Metrics: (Multinomial Naive Bayes)
+====================
+Accuracy: 0.8599
+Precision: 0.8726754726754726
+Recall: 0.8426449257240034
+F1-score: 0.8573973230189832
+    \end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}

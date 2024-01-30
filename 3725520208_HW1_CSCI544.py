@@ -50,7 +50,7 @@ full_data = pd.read_csv("./amazon_reviews_us_Office_Products_v1_00.tsv", delimit
 
 
 # Printing the data frame that contains the entire dataset from the tsv file
-print(full_data)
+# print(full_data)
 
 
 # ## Keep Reviews and Ratings
@@ -66,23 +66,18 @@ data['star_rating'] = pd.to_numeric(data['star_rating'], errors='coerce')
 
 # Displaying three sample reviews along with ratings
 sample_reviews = data.sample(3)
-print("=========================Sample Reviews:===========================")
-print(sample_reviews)
+# print("=========================Sample Reviews:===========================")
+# print(sample_reviews)
 
+
+#  ##  Form two classes and select 100000 reviews randomly from each class.
 
 # In[6]:
-
-
 # Reporting statistics of the ratings
 ratings_statistics = data['star_rating'].value_counts().sort_index()
 print("\n========================Ratings Statistics:============================")
 print("Ratings Count:")
 print(ratings_statistics)
-
-
-#  ##  Form two classes and select 100000 reviews randomly from each class.
-
-# In[7]:
 
 
 # Creating binary labels for sentiment analysis
@@ -99,7 +94,7 @@ negative_reviews = data[data['sentiment'] == 0].sample(100000, random_state=42)
 selected_reviews = pd.concat([positive_reviews, negative_reviews])
 
 # Printing the reviews that have been selected for further processing randomly
-print(selected_reviews)
+# print(selected_reviews)
 
 
 #  ## Split the dataset into training and testing dataset
@@ -120,28 +115,28 @@ X_train, X_test, y_train, y_test = train_test_split(selected_reviews['review_bod
 
 
 # Printing the Features of the training set
-print(X_train)
+# print(X_train)
 
 
 # In[10]:
 
 
 # Printing the Features of the testing set
-print(X_test)
+# print(X_test)
 
 
 # In[11]:
 
 
 # Printing the Target(s) of the training set
-print(y_train)
+# print(y_train)
 
 
 # In[12]:
 
 
 # Printing the Target(s) of the testing set
-print(y_test)
+# print(y_test)
 
 
 # # Data Cleaning
@@ -228,8 +223,8 @@ def preprocess_reviews(reviews):
     reviews = reviews.apply(lambda x: BeautifulSoup(x, 'html.parser').get_text())
     reviews = reviews.apply(lambda x: re.sub(r'http\S+', '', x))
 
-    # Remove non-alphabetical characters
-    reviews = reviews.apply(lambda x: re.sub(r'[^a-zA-Z\s]', '', x))
+    # Remove non-alphabetical characters (excluding single quote)
+    reviews = reviews.apply(lambda x: re.sub(r'[^a-zA-Z\s\']', '', x))
 
     # Remove extra spaces
     reviews = reviews.apply(lambda x: re.sub(' +', ' ', x))
@@ -246,9 +241,8 @@ X_train_preprocessed = preprocess_reviews(X_train)
 # Print average length of reviews before and after cleaning
 avg_length_before = X_train.apply(lambda x: len(str(x))).mean()
 avg_length_after = X_train_preprocessed.apply(len).mean()
-print("===================Printing the Average lenght of Reviews Before and After Cleaning====================")
-print(f"\nAverage Length of Reviews (Before Cleaning): {int(avg_length_before)} characters")
-print(f"Average Length of Reviews (After Cleaning): {int(avg_length_after)} characters")
+print("\n===================Printing the Average lenght of Reviews Before and After Cleaning====================")
+print(f"{int(avg_length_before)}, {int(avg_length_after)}")
 
 
 # # Pre-processing
@@ -278,20 +272,19 @@ X_train_nltk_preprocessed = X_train_preprocessed.apply(preprocess_nltk)
 # Print three sample reviews before and after NLTK preprocessing
 sample_reviews_indices = X_train_preprocessed.sample(3).index
 
-print("============ Printing Sample Reviews Before and After Pre-processing =============")
-for index in sample_reviews_indices:
-    print(f"\nSample Review {index} Before Pre-processing:")
-    print(X_train_preprocessed.loc[index])
+# print("============ Printing Sample Reviews Before and After Pre-processing =============")
+# for index in sample_reviews_indices:
+    # print(f"\nSample Review {index} Before Pre-processing:")
+    # print(X_train_preprocessed.loc[index])
 
-    print(f"\nSample Review {index} After NLTK Pre-processing:")
-    print(X_train_nltk_preprocessed.loc[index])
+    # print(f"\nSample Review {index} After NLTK Pre-processing:")
+    # print(X_train_nltk_preprocessed.loc[index])
 
 # Print average length of reviews before and after NLTK processing
 avg_length_before_nltk = X_train_preprocessed.apply(len).mean()
 avg_length_after_nltk = X_train_nltk_preprocessed.apply(len).mean()
 print("\n=================Printing the Average lenght of Reviews Before and After Pre-processing==================")
-print(f"\nAverage Length of Reviews (Before NLTK Processing): {int(avg_length_before_nltk)} characters")
-print(f"Average Length of Reviews (After NLTK Processing): {int(avg_length_after_nltk)} characters")
+print(f"{int(avg_length_before_nltk)}, {int(avg_length_after_nltk)}")
 
 
 # # TF-IDF Feature Extraction
@@ -309,8 +302,8 @@ X_train_tfidf = tfidf_vectorizer.fit_transform(X_train_nltk_preprocessed)
 X_test_tfidf = tfidf_vectorizer.transform(X_test.apply(preprocess_nltk))
 
 # Print the shape of the TF-IDF matrices
-print(f"\nShape of X_train_tfidf: {X_train_tfidf.shape}")
-print(f"Shape of X_test_tfidf: {X_test_tfidf.shape}")
+# print(f"\nShape of X_train_tfidf: {X_train_tfidf.shape}")
+# print(f"Shape of X_test_tfidf: {X_test_tfidf.shape}")
 
 
 # # Perceptron
@@ -344,16 +337,10 @@ f1_test = f1_score(y_test, y_test_pred)
 
 # Print the results
 print(f"\n================== Training Set Metrics: (Perceptron) ===================")
-print(f"Accuracy: {accuracy_train}")
-print(f"Precision: {precision_train}")
-print(f"Recall: {recall_train}")
-print(f"F1-score: {f1_train}")
+print(f"{accuracy_train}, {precision_train}, {recall_train}, {f1_train}")
 
 print(f"\n================== Testing Set Metrics: (Perceptron) ====================")
-print(f"Accuracy: {accuracy_test}")
-print(f"Precision: {precision_test}")
-print(f"Recall: {recall_test}")
-print(f"F1-score: {f1_test}")
+print(f"{accuracy_test}, {precision_test}, {recall_test}, {f1_test}")
 
 
 # # SVM
@@ -387,17 +374,10 @@ f1_test_svm = f1_score(y_test, y_test_pred_svm)
 
 # Print the results
 print(f"\n================== Training Set Metrics: (SVM) ====================")
-print(f"Accuracy: {accuracy_train_svm}")
-print(f"Precision: {precision_train_svm}")
-print(f"Recall: {recall_train_svm}")
-print(f"F1-score: {f1_train_svm}")
+print(f"{accuracy_train_svm}, {precision_train_svm}, {recall_train_svm}, {f1_train_svm}")
 
 print(f"\n================== Testing Set Metrics: (SVM) ====================")
-print(f"Accuracy: {accuracy_test_svm}")
-print(f"Precision: {precision_test_svm}")
-print(f"Recall: {recall_test_svm}")
-print(f"F1-score: {f1_test_svm}")
-
+print(f"{accuracy_test_svm}, {precision_test_svm}, {recall_test_svm}, {f1_test_svm}")
 
 # # Logistic Regression
 
@@ -430,16 +410,10 @@ f1_test_logreg = f1_score(y_test, y_test_pred_logreg)
 
 # Print the results
 print(f"\n================== Training Set Metrics: (Logistic Regression) ====================")
-print(f"Accuracy: {accuracy_train_logreg}")
-print(f"Precision: {precision_train_logreg}")
-print(f"Recall: {recall_train_logreg}")
-print(f"F1-score: {f1_train_logreg}")
+print(f"{accuracy_train_logreg}, {precision_train_logreg}, {recall_train_logreg}, {f1_train_logreg}")
 
 print(f"\n================== Testing Set Metrics: (Logistic Regression) ====================")
-print(f"Accuracy: {accuracy_test_logreg}")
-print(f"Precision: {precision_test_logreg}")
-print(f"Recall: {recall_test_logreg}")
-print(f"F1-score: {f1_test_logreg}")
+print(f"{accuracy_test_logreg}, {precision_test_logreg}, {recall_test_logreg}, {f1_test_logreg}")
 
 
 # # Naive Bayes
@@ -473,14 +447,7 @@ f1_test_nb = f1_score(y_test, y_test_pred_nb)
 
 # Print the results
 print(f"\n================== Training Set Metrics: (Multinomial Naive Bayes) ====================")
-print(f"Accuracy: {accuracy_train_nb}")
-print(f"Precision: {precision_train_nb}")
-print(f"Recall: {recall_train_nb}")
-print(f"F1-score: {f1_train_nb}")
+print(f"{accuracy_train_nb}, {precision_train_nb}, {recall_train_nb}, {f1_train_nb}")
 
 print(f"\n================== Testing Set Metrics: (Multinomial Naive Bayes) ====================")
-print(f"Accuracy: {accuracy_test_nb}")
-print(f"Precision: {precision_test_nb}")
-print(f"Recall: {recall_test_nb}")
-print(f"F1-score: {f1_test_nb}")
-
+print(f"{accuracy_test_nb}, {precision_test_nb}, {recall_test_nb}, {f1_test_nb}")
